@@ -18,7 +18,7 @@ class HyperbolicCache:
             del self.key_costs[evict_key]
             del self.key_access_cnt[evict_key]
             del self.key_lifetime[evict_key]
-            print("Evicted", evict_key)
+            #print("Evicted", evict_key)
         self.store_dict[key] = value
         self.key_costs[key] = cost
         self.key_access_cnt[key] = 1
@@ -26,18 +26,22 @@ class HyperbolicCache:
         #Increment all lifetime counters by 1 for this timestep
         for k in self.key_lifetime.keys():
             self.key_lifetime[k] += 1
-        self.print_cache()
+        #self.print_cache()
+
     def get(self, key):
         value = None
+        ret_val = 0
         if key in self.store_dict.keys():
             value = self.store_dict[key]
+            ret_val = 1
         else:
-            print("Cache miss", key)
+            ret_val = 0
+            #print("Cache miss", key)
         #Increment all lifetime counters by 1 for this timestep
         for k in self.key_lifetime.keys():
             self.key_lifetime[k] += 1
-        self.print_cache()
-        return value
+        #self.print_cache()
+        return ret_val
 
     def find_key_to_evict(self):
         sample = random.sample(self.store_dict.keys(), min(len(self.store_dict.keys()), self.sample_size))
@@ -61,4 +65,4 @@ def hyper_test():
 
     cache.print_cache()
 
-hyper_test()
+#hyper_test()

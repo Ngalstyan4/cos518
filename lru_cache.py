@@ -13,7 +13,7 @@ class BackendCache:
             evict_key = self.find_key_to_evict()
             self.lru_queue.remove(evict_key)
             del self.store_dict[evict_key]
-            print("Evicted", evict_key)
+            #print("Evicted", evict_key)
         self.store_dict[key] = value
         self.lru_queue.append(key)
         self.key_costs[key] = cost
@@ -23,8 +23,9 @@ class BackendCache:
             value = self.store_dict[key]
             self.lru_queue.remove(key)
             self.lru_queue.append(key)
+            return 1
         else:
-            print("Cache miss", key)
+            return 0
 
     def find_key_to_evict(self):
         if self.policy == "LRU":
@@ -76,5 +77,5 @@ def netlru_test():
     cache.get(5)
     cache.print_cache()
 
-lru_test()
-netlru_test()
+#lru_test()
+#netlru_test()
