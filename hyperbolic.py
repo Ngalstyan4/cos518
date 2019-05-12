@@ -12,6 +12,10 @@ class HyperbolicCache:
         self.sample_size = sample_size
         self.time = 0
         self.first_eviction = 1
+        # init constant
+        self.BETA = 0.1
+
+        self.last_evict_priority = 1;
 
     def put(self, key, value, cost):
         if len(self.store_dict.keys()) >= self.capacity:
@@ -25,7 +29,9 @@ class HyperbolicCache:
             del self.key_insert_time[evict_key]
         self.store_dict[key] = value
         self.key_costs[key] = cost+1
-        self.key_access_cnt[key] = 1
+        # do initialization as described in the baber
+
+        self.key_access_cnt[key] = self.BETA + (1-self.BETA)*self.last_evict_priority
         self.key_insert_time[key] = self.time
         self.time += 1 
 	#Increment all lifetime counters by 1 for this timestep
@@ -55,7 +61,10 @@ class HyperbolicCache:
         priority_dict = {}
         for k in sample:
             priority_dict[k] = self.key_costs[k]*float(self.key_access_cnt[k])/(self.time - self.key_insert_time[k])
-        return min(priority_dict, key=priority_dict.get)
+        evictee =  min(priority_dict, key=priority_dict.get)
+        self.last_evict_priority = priority_dict[evictee]
+        #print (self.last_evict_priority, priority_dict)
+        return evictee
         
 
     def print_cache(self):
