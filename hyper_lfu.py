@@ -2,7 +2,7 @@ import random
 
 #Priority function = #accesses/lifetime in cache
 
-class HyperbolicCache:
+class HyperLFUCache:
     def __init__(self, capacity, sample_size):
         self.capacity = capacity
         self.store_dict = {}
@@ -54,7 +54,7 @@ class HyperbolicCache:
         sample = random.sample(self.store_dict.keys(), min(len(self.store_dict.keys()), self.sample_size))
         priority_dict = {}
         for k in sample:
-            priority_dict[k] = self.key_costs[k]*float(self.key_access_cnt[k])/(self.time - self.key_insert_time[k])
+            priority_dict[k] = self.key_access_cnt[k]
         return min(priority_dict, key=priority_dict.get)
         
 

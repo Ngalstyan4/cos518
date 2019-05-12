@@ -1,10 +1,10 @@
 
-class BackendCache:
-    def __init__(self, capacity, policy):
+class LRUCache:
+    def __init__(self, capacity):
         self.capacity = capacity
         self.lru_queue = []
         self.store_dict = {}
-        self.policy = policy
+        self.policy = "LRU"
         self.key_costs = {}
         self.walk_length = 10
     
