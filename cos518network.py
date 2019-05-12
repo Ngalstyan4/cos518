@@ -14,7 +14,7 @@ from mininet.util import waitListening
 from mininet.util import dumpNodeConnections
 from mininet.node import CPULimitedHost
 from mininet.link import TCLink
-SERVER_PROGRAM= 'python3 -m http.server 8001'
+SERVER_PROGRAM= '/home/ubuntu/anaconda3/bin/python flask_app.py'
 def TreeNet( depth=1, fanout=2, **kwargs ):
     "Convenience function for creating tree networks."
     "Connects the root switch to all of child nodes directly"
@@ -31,7 +31,7 @@ class SingleSwitchTopo( Topo ):
                                  cpu=.5/n )
             # 10 Mbps, 5ms delay, 2% loss, 1000 packet queue
             ## link characteristics:
-            self.addLink( host, switch, bw=10, delay='5000ms',
+            self.addLink( host, switch, bw=10, delay='5ms',
                           max_queue_size=1000 )
         #linkopts = dict(bw=15, delay='2ms', loss=0, use_htb=True)
         #self.addLink(h, switch, **linkopts)
@@ -71,7 +71,7 @@ def cache( network, cmd=SERVER_PROGRAM, opts='',
         host.cmd( cmd + ' ' + opts + '&' )
     print "*** Waiting for daemons to start"
     #for server in network.hosts:
-    #    waitListening( server=server, port=8000, timeout=5 )
+    #   waitListening( server=server, port=8000, timeout=5 )
 
     print
     print "*** Hosts are running sshd at the following addresses:"
