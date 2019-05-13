@@ -23,21 +23,25 @@ def TreeNet( depth=1, fanout=2, **kwargs ):
 
 class SingleSwitchTopo( Topo ):
     "Single switch connected to n hosts."
-    def build( self, n=2 ):
+    def build( self, delays ):
         switch = self.addSwitch( 's1' )
-        for h in range(n):
+        n = 4
+        for i,delayInfo in enumerate(delays):
             # Each host gets 50%/n of system CPU
-            host = self.addHost( 'h%s' % (h + 1),
-                                 cpu=.5/n )
+            print (delayInfo)
+            host = self.addHost( delayInfo['name'])
+            #,cpu=.5/n )
             # 10 Mbps, 5ms delay, 2% loss, 1000 packet queue
             ## link characteristics:
-            self.addLink( host, switch, bw=10, delay='5ms',
+
+            # the first one is the cache @ address 10.0.0.1
+            self.addLink( host, switch, delayInfo['bw'], delay=delayInfo['delay'],
                           max_queue_size=1000 )
         #linkopts = dict(bw=15, delay='2ms', loss=0, use_htb=True)
         #self.addLink(h, switch, **linkopts)
 
-def SingleSwitchNet(n=4, **kwargs):
-    topo = SingleSwitchTopo(n)
+def SingleSwitchNet(delays, **kwargs):
+    topo = SingleSwitchTopo(delays)
     return Mininet(topo, host=CPULimitedHost, link=TCLink, **kwargs)
 
 def connectToRootNS( network, switch, ip, routes ):
@@ -88,7 +92,18 @@ def cache( network, cmd=SERVER_PROGRAM, opts='',
 
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
-    net = SingleSwitchNet(n=6)
+    UNIFORM_DELAY = '1ms'
+    MED_DELAY = '1ms'
+    HIGH_DELAY = '200ms'
+    delays = [{'name':'cache', 'bw':10, 'delay':0},
+              {'name':'db1', 'bw':10, 'delay':HIGH_DELAY},
+              {'name':'db2', 'bw':10, 'delay':MED_DELAY},
+              {'name':'db3', 'bw':10, 'delay':UNIFORM_DELAY},
+              {'name':'db4', 'bw':10, 'delay':UNIFORM_DELAY},
+              {'name':'db5', 'bw':10, 'delay':UNIFORM_DELAY},
+              {'name':'db6', 'bw':10, 'delay':UNIFORM_DELAY},
+    ]
+    net = SingleSwitchNet(delays)
     # get sshd args from the command line or use default args
     # useDNS=no -u0 to avoid reverse DNS lookup timeout
     cache( net)
